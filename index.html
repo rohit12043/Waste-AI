@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="theme-color" content="#f7f7f5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>WASTE·AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f7f5;
+  --bg2:#f0efeb;
+  --bg3:#e8e7e2;
+  --white:#ffffff;
+  --border:#e2e0d8;
+  --border2:#d0cec4;
+  --text:#1a1a18;
+  --text2:#6b6a65;
+  --text3:#a8a6a0;
+  --g:#16a34a;
+  --g-l:#22c55e;
+  --g-xl:#86efac;
+  --g-dim:#dcfce7;
+  --g-mid:#166534;
+  --bio:#15803d;
+  --bio-dim:#f0fdf4;
+  --amber:#b45309;
+  --amber-dim:#fffbeb;
+  --amber-border:#fde68a;
+  --red:#dc2626;
+  --red-dim:#fef2f2;
+  --blue:#1d4ed8;
+  --blue-dim:#eff6ff;
+  /* Gemini brand colour — soft blue-violet */
+  --gem:#4f67ff;
+  --gem-dim:#eef0ff;
+  --gem-border:#c7ccff;
+  --font:'DM Sans',sans-serif;
+  --mono:'DM Mono',monospace;
+  --r:8px;
+  --rl:12px;
+  --rx:18px;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,.08),0 2px 4px rgba(0,0,0,.04);
+  --shadow-lg:0 10px 30px rgba(0,0,0,.1),0 4px 8px rgba(0,0,0,.05);
+}
+html,body{min-height:100%;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;font-weight:400;line-height:1.5;}
+#app{max-width:520px;margin:0 auto;padding-bottom:96px}
+
+/* ── HEADER ──────────────────────────────────────────────── */
+header{padding:20px 16px 16px;display:flex;align-items:center;justify-content:space-between;}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-mark{width:36px;height:36px;border-radius:10px;background:var(--g);display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 2px 8px rgba(22,163,74,.25);}
+.brand-name{font-size:1rem;font-weight:700;letter-spacing:-.02em;color:var(--text)}
+.brand-name span{color:var(--g)}
+.header-right{display:flex;align-items:center;gap:8px}
+.status-pill{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:99px;background:var(--white);border:1px solid var(--border);font-family:var(--mono);font-size:.6rem;letter-spacing:.04em;color:var(--text3);cursor:pointer;transition:all .18s;box-shadow:var(--shadow);}
+.status-pill:hover{border-color:var(--g);color:var(--g)}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--bg3);transition:all .3s;flex-shrink:0;}
+.status-dot.online{background:var(--g-l);box-shadow:0 0 0 2px rgba(34,197,94,.2)}
+.status-txt{transition:color .3s}
+.status-dot.online ~ .status-txt{color:var(--g)}
+/* NEW: gatekeeper badge next to status */
+.gatekeeper-badge{display:none;align-items:center;gap:4px;padding:4px 8px;border-radius:99px;background:var(--gem-dim);border:1px solid var(--gem-border);font-family:var(--mono);font-size:.55rem;color:var(--gem);letter-spacing:.04em;white-space:nowrap}
+.gatekeeper-badge.show{display:flex}
+.gem-dot{width:5px;height:5px;border-radius:50%;background:var(--gem);flex-shrink:0}
+
+/* ── BINS ────────────────────────────────────────────────── */
+.bins-section{padding:0 14px 14px}
+.section-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;margin-bottom:8px;padding:0 2px}
+.bins{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.bin{background:var(--white);border:1.5px solid var(--border);border-radius:var(--rl);padding:14px 6px 11px;text-align:center;transition:all .3s cubic-bezier(.34,1.2,.64,1);position:relative;overflow:hidden;box-shadow:var(--shadow);}
+.bin::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 10px 10px;background:transparent;transition:background .3s}
+.bin.active-recyclable{border-color:var(--g);box-shadow:0 0 0 3px var(--g-dim),var(--shadow-md)}
+.bin.active-recyclable::after{background:var(--g)}
+.bin.active-biodegradable{border-color:var(--bio);box-shadow:0 0 0 3px var(--bio-dim),var(--shadow-md)}
+.bin.active-biodegradable::after{background:var(--bio)}
+.bin.active-hazardous{border-color:var(--amber);box-shadow:0 0 0 3px var(--amber-dim),var(--shadow-md)}
+.bin.active-hazardous::after{background:var(--amber)}
+.bin-icon{font-size:1.5rem;display:block;line-height:1;margin-bottom:4px}
+.bin-label{font-family:var(--mono);font-size:.58rem;letter-spacing:.05em;color:var(--text3);text-transform:uppercase;}
+.bin.active-recyclable .bin-label{color:var(--g-mid)}
+.bin.active-biodegradable .bin-label{color:var(--bio)}
+.bin.active-hazardous .bin-label{color:var(--amber)}
+
+/* ── CAMERA ──────────────────────────────────────────────── */
+.cam-outer{padding:0 14px}
+.cam-wrap{position:relative;border-radius:var(--rx);overflow:hidden;background:var(--white);border:1.5px solid var(--border);aspect-ratio:4/3;box-shadow:var(--shadow-md);transition:border-color .2s;}
+.cam-wrap.drag-over{border-color:var(--g);background:var(--g-dim)}
+#video{width:100%;height:100%;object-fit:cover;display:none}
+#preview{width:100%;height:100%;object-fit:contain;background:var(--white);display:none}
+.idle-state{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;}
+.idle-circle{width:72px;height:72px;border-radius:50%;background:var(--bg2);border:1.5px dashed var(--border2);display:flex;align-items:center;justify-content:center;font-size:1.8rem}
+.idle-hint{font-size:.8rem;color:var(--text3);text-align:center;line-height:1.6}
+.idle-hint strong{color:var(--text2);font-weight:500}
+.frame{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s}
+.frame.on{opacity:1}
+.fc{position:absolute;width:20px;height:20px}
+.fc.tl{top:12px;left:12px;border-top:2px solid var(--g);border-left:2px solid var(--g);border-radius:2px 0 0 0}
+.fc.tr{top:12px;right:12px;border-top:2px solid var(--g);border-right:2px solid var(--g);border-radius:0 2px 0 0}
+.fc.bl{bottom:12px;left:12px;border-bottom:2px solid var(--g);border-left:2px solid var(--g);border-radius:0 0 0 2px}
+.fc.br{bottom:12px;right:12px;border-bottom:2px solid var(--g);border-right:2px solid var(--g);border-radius:0 0 2px 0}
+.scanline{position:absolute;left:0;right:0;height:2px;top:0;background:linear-gradient(90deg,transparent,var(--g),transparent);animation:scanmove 2.2s ease-in-out infinite;display:none}
+.frame.on .scanline{display:block}
+@keyframes scanmove{0%{top:0%;opacity:1}80%{opacity:.4}100%{top:100%;opacity:0}}
+.cam-badge{position:absolute;top:10px;right:10px;display:none;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:99px;padding:4px 10px;font-family:var(--mono);font-size:.58rem;color:var(--g-mid);align-items:center;gap:5px;}
+.cam-badge.show{display:flex}
+.liveblink{width:5px;height:5px;border-radius:50%;background:var(--g-l);animation:blink 1.6s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* NEW: Multi-stage overlay with Gemini + classifier steps */
+.overlay{position:absolute;inset:0;background:rgba(247,247,245,.9);backdrop-filter:blur(8px);display:none;flex-direction:column;align-items:center;justify-content:center;gap:0}
+.overlay.on{display:flex}
+.overlay-stages{display:flex;flex-direction:column;gap:10px;align-items:center}
+.overlay-stage{display:flex;align-items:center;gap:9px;padding:8px 14px;border-radius:99px;background:transparent;transition:all .3s}
+.overlay-stage.active{background:var(--white);box-shadow:var(--shadow-md)}
+.overlay-stage.done{opacity:.45}
+.stage-spinner{width:16px;height:16px;border:2px solid var(--bg3);border-top-color:var(--g);border-radius:50%;animation:spin .65s linear infinite;flex-shrink:0}
+.stage-spinner.gem{border-top-color:var(--gem)}
+.stage-check{width:16px;height:16px;border-radius:50%;background:var(--g);display:flex;align-items:center;justify-content:center;font-size:.6rem;flex-shrink:0}
+.stage-idle{width:16px;height:16px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0}
+.stage-label{font-family:var(--mono);font-size:.68rem;letter-spacing:.05em;color:var(--text2)}
+.overlay-stage.active .stage-label{color:var(--text);font-weight:500}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── CONTROLS ────────────────────────────────────────────── */
+.controls{display:flex;gap:7px;padding:10px 14px}
+.btn{flex:1;padding:12px 0;border:none;border-radius:var(--rl);font-family:var(--font);font-size:.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .15s;letter-spacing:-.01em;}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--g);color:#fff;box-shadow:0 2px 8px rgba(22,163,74,.3);}
+.btn-primary:hover{background:var(--g-mid);box-shadow:0 4px 14px rgba(22,163,74,.35)}
+.btn-secondary{background:var(--white);border:1.5px solid var(--border);color:var(--text2);box-shadow:var(--shadow);}
+.btn-secondary:hover{border-color:var(--g);color:var(--g)}
+.btn-icon{flex:0 0 auto;padding:12px 14px}
+
+/* ── HINT ────────────────────────────────────────────────── */
+.hint-row{padding:0 14px 10px}
+.hint-wrap{position:relative;display:flex;align-items:center}
+.hint{width:100%;background:var(--white);border:1.5px solid var(--border);border-radius:var(--rl);padding:11px 40px 11px 14px;font-family:var(--font);font-size:.82rem;color:var(--text);outline:none;transition:border-color .18s,box-shadow .18s;box-shadow:var(--shadow);}
+.hint::placeholder{color:var(--text3)}
+.hint:focus{border-color:var(--g);box-shadow:0 0 0 3px var(--g-dim)}
+.hint-clear{position:absolute;right:10px;background:none;border:none;color:var(--text3);cursor:pointer;font-size:1rem;padding:4px;display:none;line-height:1}
+.hint-clear.show{display:block}
+
+/* ── TABS ────────────────────────────────────────────────── */
+.tabs{display:flex;margin:0 14px 12px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--rl);padding:3px;box-shadow:var(--shadow);}
+.tab{flex:1;padding:8px 0;border:none;border-radius:9px;background:none;font-family:var(--font);font-size:.78rem;font-weight:500;color:var(--text3);cursor:pointer;transition:all .18s;letter-spacing:-.01em;}
+.tab.active{background:var(--g);color:#fff;box-shadow:0 2px 6px rgba(22,163,74,.25)}
+
+/* ── RESULT ──────────────────────────────────────────────── */
+.result-outer{padding:0 14px}
+.result-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--rx);overflow:hidden;opacity:0;transform:translateY(14px) scale(.99);transition:opacity .35s ease,transform .35s cubic-bezier(.34,1.2,.64,1);display:none;box-shadow:var(--shadow-md);}
+.result-card.show{opacity:1;transform:none;display:block}
+.r-banner{padding:18px 18px 16px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;border-bottom:1px solid var(--border)}
+.r-emoji{font-size:2.4rem;line-height:1}
+.r-text{min-width:0}
+.r-primary{font-size:1.35rem;font-weight:700;letter-spacing:-.03em;line-height:1.1}
+.r-tag{display:inline-flex;align-items:center;gap:4px;margin-top:5px;padding:2px 9px;border-radius:99px;font-family:var(--mono);font-size:.6rem;font-weight:500;letter-spacing:.02em}
+.r-action{font-size:.76rem;color:var(--text2);margin-top:4px;display:flex;align-items:center;gap:4px}
+.conf-ring{flex-shrink:0}
+.alert{margin:10px 14px 0;padding:10px 12px;border-radius:var(--r);font-size:.76rem;line-height:1.55;display:flex;gap:8px}
+.alert-ico{flex-shrink:0;font-size:1rem}
+.alert-txt{flex:1}
+.alert-warn{background:var(--red-dim);border:1px solid #fca5a5;color:#991b1b}
+.alert-amber{background:var(--amber-dim);border:1px solid var(--amber-border);color:#78350f}
+.alert-info{background:var(--blue-dim);border:1px solid #bfdbfe;color:#1e3a8a}
+.alert-success{background:var(--g-dim);border:1px solid var(--g-xl);color:var(--g-mid)}
+
+/* NEW: Non-waste blocked card — replaces generic alert */
+.nonwaste-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--rx);overflow:hidden;opacity:0;transform:translateY(14px) scale(.99);transition:opacity .35s ease,transform .35s cubic-bezier(.34,1.2,.64,1);display:none;box-shadow:var(--shadow-md);}
+.nonwaste-card.show{opacity:1;transform:none;display:block}
+.nw-banner{padding:24px 20px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;border-bottom:1px solid var(--border);background:linear-gradient(160deg,#fafafa 0%,var(--gem-dim) 100%)}
+.nw-icon{font-size:3.2rem;line-height:1;margin-bottom:12px}
+.nw-title{font-size:1.2rem;font-weight:700;letter-spacing:-.02em;color:var(--text);margin-bottom:5px}
+.nw-subtitle{font-size:.8rem;color:var(--text2);line-height:1.5;max-width:260px}
+.nw-detected{display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:5px 13px;border-radius:99px;background:var(--white);border:1px solid var(--gem-border);font-family:var(--mono);font-size:.65rem;color:var(--gem)}
+.nw-footer{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.nw-gemini{display:flex;align-items:center;gap:6px;font-size:.73rem;color:var(--text3)}
+.nw-gemini-badge{display:flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;background:var(--gem-dim);border:1px solid var(--gem-border);font-family:var(--mono);font-size:.6rem;color:var(--gem)}
+.nw-tip{font-size:.73rem;color:var(--text2);font-style:italic}
+
+/* ── PROBS ────────────────────────────────────────────────── */
+.probs{padding:14px 18px;border-top:1px solid var(--border)}
+.probs-ttl{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;margin-bottom:10px}
+.prow{display:flex;align-items:center;gap:10px;margin:7px 0}
+.pname{width:120px;font-family:var(--mono);font-size:.7rem;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ptrack{flex:1;height:5px;background:var(--bg2);border-radius:99px;overflow:hidden}
+.pfill{height:100%;border-radius:99px;width:0;transition:width .9s cubic-bezier(.34,1.2,.64,1)}
+.ppct{font-family:var(--mono);font-size:.63rem;color:var(--text3);width:28px;text-align:right}
+
+/* ── METRICS ──────────────────────────────────────────────── */
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:12px 14px;border-top:1px solid var(--border)}
+.mbox{background:var(--bg);border-radius:var(--r);padding:12px 8px;text-align:center;border:1px solid var(--border)}
+.mval{font-family:var(--mono);font-size:1.05rem;font-weight:600;color:var(--g-mid);line-height:1}
+.mlbl{font-size:.6rem;color:var(--text3);margin-top:4px;letter-spacing:.02em}
+.facility-row{padding:11px 18px 14px;font-size:.76rem;color:var(--text2);display:flex;gap:6px;align-items:flex-start;border-top:1px solid var(--border)}
+.facility-row strong{color:var(--text);font-weight:600}
+
+/* ── AI REASONING ─────────────────────────────────────────── */
+.ai-reasoning{margin:8px 14px 0;background:var(--g-dim);border:1px solid var(--g-xl);border-radius:var(--rl);padding:14px;display:none}
+.ai-reasoning.show{display:block}
+.ai-head{display:flex;align-items:center;gap:7px;margin-bottom:8px;font-size:.76rem;font-weight:600;color:var(--g-mid)}
+.ai-text{font-size:.78rem;color:#166534;line-height:1.65}
+
+/* ── XAI ──────────────────────────────────────────────────── */
+.xai{margin:8px 14px 0;background:var(--white);border:1.5px solid var(--border);border-radius:var(--rl);overflow:hidden;display:none;box-shadow:var(--shadow);}
+.xai-head{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;transition:background .15s}
+.xai-head:hover{background:var(--bg)}
+.xai-head-left{display:flex;align-items:center;gap:7px;font-size:.78rem;font-weight:600;color:var(--text)}
+.xai-chevron{color:var(--text3);transition:transform .22s;font-size:.65rem}
+.xai-chevron.open{transform:rotate(180deg)}
+.xai-body{padding:0 14px 10px;display:none;border-top:1px solid var(--border)}
+.xai-body.open{display:block}
+.xai-step{display:flex;gap:11px;padding:10px 0;border-bottom:1px solid var(--border)}
+.xai-step:last-child{border-bottom:none}
+.xai-ico{width:30px;height:30px;border-radius:8px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;margin-top:1px}
+.xai-step-body{flex:1}
+.xai-ttl{font-size:.8rem;font-weight:600;margin-bottom:2px}
+.xai-desc{font-size:.73rem;color:var(--text2);line-height:1.55}
+
+/* ── HISTORY ──────────────────────────────────────────────── */
+.history-panel{padding:0 14px;display:none}
+.history-panel.active{display:block}
+.hist-empty{text-align:center;padding:48px 24px;color:var(--text3)}
+.hist-empty-icon{font-size:2.5rem;margin-bottom:10px}
+.hist-empty-txt{font-size:.82rem;line-height:1.6}
+.hist-item{background:var(--white);border:1.5px solid var(--border);border-radius:var(--rl);padding:13px 14px;margin-bottom:8px;display:flex;gap:12px;align-items:center;box-shadow:var(--shadow);animation:slideup .25s ease both}
+@keyframes slideup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hist-emoji{font-size:1.6rem;flex-shrink:0}
+.hist-body{flex:1;min-width:0}
+.hist-label{font-size:.85rem;font-weight:600;margin-bottom:2px}
+.hist-sub{font-size:.72rem;color:var(--text3);font-family:var(--mono)}
+.hist-bin{padding:2px 8px;border-radius:99px;font-family:var(--mono);font-size:.58rem;font-weight:500}
+.hist-time{font-family:var(--mono);font-size:.6rem;color:var(--text3)}
+/* NEW: blocked item in history */
+.hist-item.blocked{border-color:var(--gem-border);background:var(--gem-dim)}
+.hist-item.blocked .hist-label{color:var(--gem)}
+
+/* ── IMPACT ───────────────────────────────────────────────── */
+.impact-panel{padding:0 14px;display:none}
+.impact-panel.active{display:block}
+.impact-hero{background:var(--white);border:1.5px solid var(--border);border-radius:var(--rx);padding:20px;margin-bottom:10px;text-align:center;box-shadow:var(--shadow-md)}
+.impact-big{font-size:3rem;font-weight:700;letter-spacing:-.04em;color:var(--g-mid);line-height:1}
+.impact-unit{font-size:.8rem;color:var(--text2);margin-top:4px}
+.impact-tree{font-size:2rem;margin:12px 0 6px}
+.impact-equiv{font-size:.8rem;color:var(--text2)}
+.impact-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.impact-box{background:var(--white);border:1.5px solid var(--border);border-radius:var(--rl);padding:14px;text-align:center;box-shadow:var(--shadow)}
+.impact-num{font-family:var(--mono);font-size:1.5rem;font-weight:600;color:var(--g-mid);line-height:1}
+.impact-lbl{font-size:.7rem;color:var(--text2);margin-top:4px}
+.breakdown-section{background:var(--white);border:1.5px solid var(--border);border-radius:var(--rl);padding:14px;box-shadow:var(--shadow)}
+.breakdown-title{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;margin-bottom:12px}
+.brow{display:flex;align-items:center;gap:10px;margin:8px 0}
+.bname{font-size:.78rem;color:var(--text);width:90px}
+.btrack{flex:1;height:6px;background:var(--bg2);border-radius:99px;overflow:hidden}
+.bfill{height:100%;border-radius:99px;background:var(--g);transition:width .9s cubic-bezier(.34,1.2,.64,1)}
+.bcount{font-family:var(--mono);font-size:.65rem;color:var(--text3);width:20px;text-align:right}
+
+/* ── SESSION BAR ──────────────────────────────────────────── */
+.session-bar{margin:12px 14px 0;background:var(--white);border:1.5px solid var(--border);border-radius:var(--rl);padding:12px 14px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow)}
+.session-stats{display:flex;gap:14px;flex:1}
+.sstat{text-align:center}
+.snum{font-family:var(--mono);font-size:1.1rem;font-weight:600;color:var(--g-mid);line-height:1}
+.slbl{font-size:.6rem;color:var(--text3);margin-top:2px}
+.session-divider{width:1px;height:36px;background:var(--border);flex-shrink:0}
+.reset-btn{font-size:.72rem;color:var(--text3);background:none;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;padding:6px 10px;transition:all .15s;font-family:var(--font)}
+.reset-btn:hover{border-color:var(--g);color:var(--g)}
+
+/* ── NAV ──────────────────────────────────────────────────── */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;background:rgba(247,247,245,.95);backdrop-filter:blur(16px);border-top:1px solid var(--border);display:flex;padding:6px 0 max(6px,env(safe-area-inset-bottom));z-index:99}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;padding:6px 0;font-family:var(--mono);font-size:.56rem;letter-spacing:.04em;color:var(--text3);transition:color .15s}
+.nav-btn.active{color:var(--g)}
+.nav-btn svg{width:18px;height:18px}
+.nav-ic{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:8px;transition:background .15s}
+.nav-btn.active .nav-ic{background:var(--g-dim)}
+
+/* ── MODAL ────────────────────────────────────────────────── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);z-index:200;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .22s}
+.modal-bg.open{opacity:1;pointer-events:all}
+.modal{background:var(--white);border:1px solid var(--border);border-radius:var(--rx) var(--rx) 0 0;width:100%;max-width:520px;margin:0 auto;padding:20px 18px max(20px,env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .35s cubic-bezier(.34,1.2,.64,1);box-shadow:0 -8px 32px rgba(0,0,0,.1)}
+.modal-bg.open .modal{transform:none}
+.modal-pill{width:32px;height:3px;border-radius:2px;background:var(--bg3);margin:0 auto 18px}
+.modal-title{font-size:1.05rem;font-weight:700;margin-bottom:4px;letter-spacing:-.02em}
+.modal-desc{font-size:.8rem;color:var(--text2);line-height:1.5;margin-bottom:16px}
+.field-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:5px;text-transform:uppercase}
+/* NEW: Gemini field label style */
+.field-label-gem{color:var(--gem)}
+.modal-input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r);padding:11px 14px;font-family:var(--mono);font-size:.8rem;color:var(--text);outline:none;margin-bottom:14px;transition:border-color .18s,box-shadow .18s}
+.modal-input:focus{border-color:var(--g);box-shadow:0 0 0 3px var(--g-dim)}
+/* NEW: Gemini key input gets its own focus ring */
+.modal-input-gem:focus{border-color:var(--gem);box-shadow:0 0 0 3px var(--gem-dim)}
+.modal-divider{height:1px;background:var(--border);margin:4px 0 16px}
+.modal-note{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;font-size:.74rem;color:var(--text2);line-height:1.65;margin-bottom:16px}
+.modal-note code{font-family:var(--mono);color:var(--g-mid);font-size:.72rem;background:var(--g-dim);padding:1px 5px;border-radius:4px}
+.step-num{display:inline-flex;width:16px;height:16px;align-items:center;justify-content:center;border-radius:50%;background:var(--g);color:#fff;font-size:.6rem;font-weight:700;font-family:var(--mono);flex-shrink:0;margin-right:3px}
+/* NEW: Gemini info box inside modal */
+.gem-info{display:flex;gap:9px;align-items:flex-start;padding:10px 12px;border-radius:var(--r);background:var(--gem-dim);border:1px solid var(--gem-border);margin-bottom:14px;font-size:.74rem;color:#3730a3;line-height:1.55}
+.gem-info-icon{font-size:1rem;flex-shrink:0;margin-top:1px}
+
+/* ── TOAST ────────────────────────────────────────────────── */
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-12px);background:var(--text);color:var(--white);border-radius:var(--r);padding:8px 16px;font-size:.76rem;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;white-space:nowrap;transition:all .22s;z-index:300;font-weight:500}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── SCAN PANEL ───────────────────────────────────────────── */
+.scan-panel{display:none}
+.scan-panel.active{display:block}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand">
+      <div class="brand-mark">♻</div>
+      <div class="brand-name">Waste<span>·AI</span></div>
+    </div>
+    <div class="header-right">
+      <!-- NEW: Gemini gatekeeper badge -->
+      <div class="gatekeeper-badge" id="gem-badge">
+        <div class="gem-dot"></div>
+        <span id="gem-badge-txt">gemini</span>
+      </div>
+      <div class="status-pill" id="status-pill" onclick="openModal()">
+        <div class="status-dot" id="status-dot"></div>
+        <span class="status-txt" id="status-txt">OFFLINE</span>
+        <span>⚙</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('scan',this)">Scan</button>
+    <button class="tab" onclick="switchTab('history',this)">History</button>
+    <button class="tab" onclick="switchTab('impact',this)">Impact</button>
+  </div>
+
+  <!-- ── SCAN TAB ──────────────────────────────────────────── -->
+  <div class="scan-panel active" id="tab-scan">
+    <div class="bins-section">
+      <div class="section-label">Bins</div>
+      <div class="bins">
+        <div class="bin" id="bin-recyclable">
+          <span class="bin-icon">♻️</span>
+          <div class="bin-label">Recyclable</div>
+        </div>
+        <div class="bin" id="bin-biodegradable">
+          <span class="bin-icon">🌱</span>
+          <div class="bin-label">Biodegradable</div>
+        </div>
+        <div class="bin" id="bin-hazardous">
+          <span class="bin-icon">⚠️</span>
+          <div class="bin-label">Hazardous</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cam-outer">
+      <div class="cam-wrap" id="cam-wrap"
+           ondragover="event.preventDefault()"
+           ondrop="handleDrop(event)"
+           ondragenter="document.getElementById('cam-wrap').classList.add('drag-over')"
+           ondragleave="document.getElementById('cam-wrap').classList.remove('drag-over')">
+        <video id="video" autoplay playsinline muted></video>
+        <img id="preview" alt="">
+        <div class="idle-state" id="idle">
+          <div class="idle-circle">📷</div>
+          <div class="idle-hint"><strong>Tap Camera or Upload</strong><br>Drag & drop also supported</div>
+        </div>
+        <div class="frame" id="frame">
+          <div class="fc tl"></div><div class="fc tr"></div>
+          <div class="fc bl"></div><div class="fc br"></div>
+          <div class="scanline"></div>
+        </div>
+        <div class="cam-badge" id="cam-badge">
+          <div class="liveblink"></div><span id="mode-text">LIVE</span>
+        </div>
+
+        <!-- NEW: Multi-stage overlay -->
+        <div class="overlay" id="overlay">
+          <div class="overlay-stages">
+            <div class="overlay-stage" id="stage-gem">
+              <div class="stage-spinner gem" id="stage-gem-spin"></div>
+              <span class="stage-label">Gemini checking…</span>
+            </div>
+            <div class="overlay-stage" id="stage-cls">
+              <div class="stage-idle" id="stage-cls-spin"></div>
+              <span class="stage-label">Classifying waste…</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-primary" id="btn-cam" onclick="toggleCam()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Camera
+      </button>
+      <button class="btn btn-secondary" onclick="doUpload()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Upload
+      </button>
+      <button class="btn btn-secondary btn-icon" onclick="doClassify()" title="Classify">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+    </div>
+
+    <div class="hint-row">
+      <div class="hint-wrap">
+        <input class="hint" id="hint" type="text"
+               placeholder="Hint: greasy pizza box · black plastic · broken glass…"
+               autocomplete="off" autocorrect="off" spellcheck="false"
+               oninput="toggleHintClear()">
+        <button class="hint-clear" id="hint-clear" onclick="clearHint()">×</button>
+      </div>
+    </div>
+
+    <!-- NEW: Non-waste blocked card (shown instead of result-card when Gemini blocks) -->
+    <div class="result-outer">
+      <div class="nonwaste-card" id="nonwaste-card">
+        <div class="nw-banner">
+          <div class="nw-icon">🚫</div>
+          <div class="nw-title">Not a waste item</div>
+          <div class="nw-subtitle" id="nw-subtitle">This image doesn't appear to contain a waste item that needs disposal guidance.</div>
+          <div class="nw-detected" id="nw-detected">
+            <span>🔍</span><span id="nw-detected-txt">—</span>
+          </div>
+        </div>
+        <div class="nw-footer">
+          <div class="nw-gemini">
+            Detected by
+            <div class="nw-gemini-badge"><div class="gem-dot"></div> Gemini Vision</div>
+          </div>
+          <div class="nw-tip">Try scanning a waste item ♻️</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Regular result card -->
+    <div class="result-outer" style="margin-top:8px">
+      <div class="result-card" id="result-card"></div>
+    </div>
+
+    <div class="ai-reasoning" id="ai-reasoning">
+      <div class="ai-head">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20z"/><path d="M12 16v-4M12 8h.01"/></svg>
+        AI Insight
+      </div>
+      <div class="ai-text" id="ai-text"></div>
+    </div>
+
+    <div class="xai" id="xai">
+      <div class="xai-head" onclick="toggleXAI()">
+        <div class="xai-head-left">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          Why this result?
+        </div>
+        <span class="xai-chevron" id="xai-chevron">▾</span>
+      </div>
+      <div class="xai-body" id="xai-body"></div>
+    </div>
+
+    <div class="session-bar">
+      <div class="session-stats">
+        <div class="sstat"><div class="snum" id="s-n">0</div><div class="slbl">Scans</div></div>
+        <div class="session-divider"></div>
+        <div class="sstat"><div class="snum" id="s-co2">0.0</div><div class="slbl">kg CO₂</div></div>
+        <div class="session-divider"></div>
+        <div class="sstat"><div class="snum" id="s-acc">—</div><div class="slbl">Accuracy</div></div>
+      </div>
+      <button class="reset-btn" onclick="resetSession()">↺ Reset</button>
+    </div>
+  </div>
+
+  <!-- ── HISTORY TAB ─────────────────────────────────────────── -->
+  <div class="history-panel" id="tab-history">
+    <div class="hist-empty" id="hist-empty">
+      <div class="hist-empty-icon">🗂️</div>
+      <div class="hist-empty-txt">No scans yet.<br>Classify something to see your history here.</div>
+    </div>
+    <div id="hist-list"></div>
+  </div>
+
+  <!-- ── IMPACT TAB ──────────────────────────────────────────── -->
+  <div class="impact-panel" id="tab-impact">
+    <div class="impact-hero">
+      <div class="impact-big" id="imp-co2">0.0</div>
+      <div class="impact-unit">kg CO₂ saved this session</div>
+      <div class="impact-tree" id="imp-icon">🌱</div>
+      <div class="impact-equiv" id="imp-equiv">Start scanning to see your environmental impact</div>
+    </div>
+    <div class="impact-grid">
+      <div class="impact-box"><div class="impact-num" id="imp-items">0</div><div class="impact-lbl">Items classified</div></div>
+      <div class="impact-box"><div class="impact-num" id="imp-value">₹0</div><div class="impact-lbl">Scrap value</div></div>
+      <div class="impact-box"><div class="impact-num" id="imp-weight">0kg</div><div class="impact-lbl">Total weight</div></div>
+      <div class="impact-box"><div class="impact-num" id="imp-conf">—</div><div class="impact-lbl">Avg. confidence</div></div>
+    </div>
+    <div class="breakdown-section">
+      <div class="breakdown-title">Category breakdown</div>
+      <div id="breakdown-bars"></div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="nav-btn active" id="nav-scan" onclick="switchTab('scan',null,this)">
+    <div class="nav-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+    SCAN
+  </button>
+  <button class="nav-btn" id="nav-history" onclick="switchTab('history',null,this)">
+    <div class="nav-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+    HISTORY
+  </button>
+  <button class="nav-btn" id="nav-impact" onclick="switchTab('impact',null,this)">
+    <div class="nav-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+    IMPACT
+  </button>
+</nav>
+
+<!-- MODAL — updated with Gemini key field -->
+<div class="modal-bg" id="modal-bg" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-pill"></div>
+    <div class="modal-title">⚙ Backend Connection</div>
+    <div class="modal-desc">Connect your Kaggle backend and Gemini Vision gatekeeper.</div>
+
+    <label class="field-label">Ngrok Public URL</label>
+    <input class="modal-input" id="api-url" type="url"
+           placeholder="https://xxxx-xx-xx.ngrok-free.app"
+           autocomplete="off" autocorrect="off" autocapitalize="none">
+
+    <!-- NEW: Gemini key section -->
+    <div class="modal-divider"></div>
+    <div class="gem-info">
+      <div class="gem-info-icon">✨</div>
+      <div>Gemini Vision is used as the non-waste gatekeeper — it detects people, animals, vehicles, etc. before your waste model runs. Get a free key at <strong>aistudio.google.com</strong> → no credit card needed.</div>
+    </div>
+    <label class="field-label field-label-gem">Gemini API Key (stored in backend)</label>
+    <input class="modal-input modal-input-gem" id="gemini-key-display" type="text"
+           placeholder="Already set in backend — for reference only"
+           autocomplete="off" autocorrect="off" autocapitalize="none" readonly
+           style="opacity:.6;cursor:default">
+
+    <div class="modal-note">
+      <span class="step-num">1</span> Add <code>backend_gemini_gatekeeper.py</code> as a new cell in Kaggle<br>
+      <span class="step-num">2</span> Set <code>GEMINI_API_KEY</code> in the backend file<br>
+      <span class="step-num">3</span> Run it — prints a URL like <code>https://abc123.ngrok-free.app</code><br>
+      <span class="step-num">4</span> Paste the URL above → tap Save &amp; Test ✅
+    </div>
+    <button class="btn btn-primary" style="width:100%;border-radius:var(--rl)" onclick="saveAPI()">
+      Save &amp; Test Connection
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<input type="file" id="file-in" accept="image/*" style="display:none" onchange="handleFile(event)">
+
+<script>
+const CFG = { url: localStorage.getItem('wasteai_url') || '', gatekeeper: '' };
+const SESSION = { n:0, co2:0, weight:0, value:0, confs:[], hist:[], cats:{}, blocked:0 };
+let stream = null, camOn = false;
+
+const BIN_COLOR = {
+  Recyclable:'#16a34a', Biodegradable:'#15803d',
+  Hazardous:'#b45309', Unknown:'#6b7280', 'Mixed / Uncertain':'#9ca3af'
+};
+const BIN_BG = {
+  Recyclable:'#dcfce7', Biodegradable:'#f0fdf4',
+  Hazardous:'#fffbeb', Unknown:'#f3f4f6', 'Mixed / Uncertain':'#f9fafb'
+};
+const PROB_COLOR = {
+  Plastic:'#16a34a', Metal:'#16a34a', Glass:'#15803d',
+  Paper:'#16a34a', Cardboard:'#166534', Textile:'#22c55e',
+  General_Waste:'#6b7280', Biological:'#15803d', 'E-Waste':'#b45309',
+};
+const EMOJI = {
+  Plastic:'🧴', Metal:'🔩', Glass:'🫙', Paper:'📄', Cardboard:'📦',
+  Textile:'👕', General_Waste:'🗑️', 'E-Waste':'💻', Biological:'🥦',
+  'Mixed / Uncertain':'⚠️', 'Non-Waste':'🚫'
+};
+
+// ── TAB SWITCHING ─────────────────────────────────────────────────────────────
+function switchTab(name, tabBtn, navBtn) {
+  ['scan','history','impact'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('active', t===name);
+  });
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  if (tabBtn) tabBtn.classList.add('active');
+  const navMap = {scan:'nav-scan', history:'nav-history', impact:'nav-impact'};
+  document.getElementById(navMap[name]).classList.add('active');
+  if (name === 'impact') renderImpact();
+}
+
+// ── OVERLAY STAGES ────────────────────────────────────────────────────────────
+// stage: 'gem' | 'cls' | null
+function setOverlayStage(stage) {
+  const overlay = document.getElementById('overlay');
+  const gemStage = document.getElementById('stage-gem');
+  const clsStage = document.getElementById('stage-cls');
+  const gemSpin  = document.getElementById('stage-gem-spin');
+  const clsSpin  = document.getElementById('stage-cls-spin');
+
+  if (!stage) { overlay.classList.remove('on'); return; }
+  overlay.classList.add('on');
+
+  if (stage === 'gem') {
+    gemStage.classList.add('active'); gemStage.classList.remove('done');
+    clsStage.classList.remove('active','done');
+    gemSpin.className = 'stage-spinner gem';
+    clsSpin.className = 'stage-idle';
+  } else if (stage === 'cls') {
+    gemStage.classList.remove('active'); gemStage.classList.add('done');
+    clsStage.classList.add('active'); clsStage.classList.remove('done');
+    gemSpin.outerHTML = '<div class="stage-check" id="stage-gem-spin">✓</div>';
+    clsSpin.className = 'stage-spinner';
+  }
+}
+
+// ── CAMERA ────────────────────────────────────────────────────────────────────
+async function toggleCam() {
+  if (camOn) { snapClassify(); return; }
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video:{ facingMode:{ideal:'environment'}, width:{ideal:1280}, height:{ideal:960} }
+    });
+    const v = document.getElementById('video');
+    v.srcObject = stream; v.style.display = 'block';
+    document.getElementById('preview').style.display = 'none';
+    document.getElementById('idle').style.display = 'none';
+    document.getElementById('frame').classList.add('on');
+    document.getElementById('cam-badge').classList.add('show');
+    document.getElementById('mode-text').textContent = 'LIVE';
+    const facing = stream.getVideoTracks()[0].getSettings().facingMode;
+    v.style.transform = facing === 'user' ? 'scaleX(-1)' : '';
+    document.getElementById('btn-cam').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="12" cy="13" r="4"/><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/></svg> Snap`;
+    camOn = true;
+  } catch { toast('⚠ Camera access denied — use Upload'); }
+}
+
+function snapClassify() {
+  const v = document.getElementById('video');
+  const c = document.createElement('canvas');
+  c.width = v.videoWidth; c.height = v.videoHeight;
+  const ctx = c.getContext('2d');
+  if (v.style.transform === 'scaleX(-1)') { ctx.translate(c.width,0); ctx.scale(-1,1); }
+  ctx.drawImage(v,0,0);
+  doClassify(c.toDataURL('image/jpeg',.85).split(',')[1]);
+}
+
+function stopCam() {
+  if (stream) { stream.getTracks().forEach(t=>t.stop()); stream=null; }
+  camOn = false;
+  document.getElementById('frame').classList.remove('on');
+  document.getElementById('cam-badge').classList.remove('show');
+  document.getElementById('btn-cam').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Camera`;
+}
+
+function doUpload() { stopCam(); document.getElementById('file-in').click(); }
+
+function handleFile(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    stopCam();
+    const preview = document.getElementById('preview');
+    preview.src = ev.target.result; preview.style.display = 'block';
+    document.getElementById('video').style.display = 'none';
+    document.getElementById('idle').style.display = 'none';
+    document.getElementById('frame').classList.add('on');
+    document.getElementById('cam-badge').classList.add('show');
+    document.getElementById('mode-text').textContent = 'IMAGE';
+    doClassify(ev.target.result.split(',')[1]);
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('cam-wrap').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    stopCam();
+    const preview = document.getElementById('preview');
+    preview.src = ev.target.result; preview.style.display = 'block';
+    document.getElementById('video').style.display = 'none';
+    document.getElementById('idle').style.display = 'none';
+    document.getElementById('frame').classList.add('on');
+    document.getElementById('cam-badge').classList.add('show');
+    document.getElementById('mode-text').textContent = 'IMAGE';
+    doClassify(ev.target.result.split(',')[1]);
+  };
+  reader.readAsDataURL(file);
+}
+
+function getB64() {
+  const v = document.getElementById('video');
+  const p = document.getElementById('preview');
+  if (camOn && v.readyState >= 2) {
+    const c = document.createElement('canvas');
+    c.width = v.videoWidth||640; c.height = v.videoHeight||480;
+    const ctx = c.getContext('2d');
+    if (v.style.transform === 'scaleX(-1)') { ctx.translate(c.width,0); ctx.scale(-1,1); }
+    ctx.drawImage(v,0,0);
+    return c.toDataURL('image/jpeg',.85).split(',')[1];
+  }
+  if (p.src && p.style.display !== 'none') {
+    const c = document.createElement('canvas');
+    c.width = p.naturalWidth||640; c.height = p.naturalHeight||480;
+    c.getContext('2d').drawImage(p,0,0);
+    return c.toDataURL('image/jpeg',.85).split(',')[1];
+  }
+  return null;
+}
+
+// ── CLASSIFY ──────────────────────────────────────────────────────────────────
+async function doClassify(b64=null) {
+  if (!b64) b64 = getB64();
+  if (!b64) { toast('📷 No image — use Camera or Upload'); return; }
+  if (!CFG.url) { toast('⚙ Please set API URL first'); openModal(); return; }
+
+  const hint = document.getElementById('hint').value.trim();
+
+  // Hide previous results
+  hideResults();
+
+  // Stage 1: Gemini checking
+  setOverlayStage('gem');
+
+  try {
+    // Small delay so "Gemini checking…" is visible (Gemini is fast, ~300ms)
+    const [response] = await Promise.all([
+      fetch(CFG.url.replace(/\/$/,'')+'/predict', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({image:b64, hint})
+      }),
+      new Promise(r => setTimeout(r, 600))  // min 600ms on stage-gem so user sees it
+    ]);
+
+    if (!response.ok) throw new Error(`Server error ${response.status}`);
+    const result = await response.json();
+
+    // Check if Gemini blocked it (non-waste)
+    if (result.label === 'Non-Waste') {
+      setOverlayStage(null);
+      renderNonWaste(result);
+      updateSessionBlocked(result);
+      return;
+    }
+
+    // Stage 2: classifier running (brief visual transition)
+    setOverlayStage('cls');
+    await new Promise(r => setTimeout(r, 400));
+
+    setOverlayStage(null);
+    renderResult(result);
+    renderXAI(result.xai || []);
+    if (result.ai_reasoning) {
+      document.getElementById('ai-text').textContent = result.ai_reasoning;
+      document.getElementById('ai-reasoning').classList.add('show');
+    } else {
+      document.getElementById('ai-reasoning').classList.remove('show');
+    }
+    updateSession(result);
+
+  } catch(err) {
+    setOverlayStage(null);
+    toast('✕ ' + err.message);
+  }
+}
+
+// ── HIDE ALL RESULTS ──────────────────────────────────────────────────────────
+function hideResults() {
+  const rc = document.getElementById('result-card');
+  const nw = document.getElementById('nonwaste-card');
+  rc.classList.remove('show'); rc.style.display = 'none';
+  nw.classList.remove('show'); nw.style.display = 'none';
+  document.getElementById('ai-reasoning').classList.remove('show');
+  document.getElementById('xai').style.display = 'none';
+  document.querySelectorAll('.bin').forEach(b => b.className = 'bin');
+}
+
+// ── RENDER NON-WASTE ──────────────────────────────────────────────────────────
+function renderNonWaste(r) {
+  // Friendly description from Gemini's detected label
+  const detected = r.display || r.ood_message?.replace('Gemini detected non-waste: ','') || 'non-waste object';
+
+  // Make subtitle more descriptive based on detected content
+  let subtitle = "This image doesn't appear to contain a waste item that needs disposal guidance.";
+  if (detected.toLowerCase().includes('person') || detected.toLowerCase().includes('human') ||
+      detected.toLowerCase().includes('suit') || detected.toLowerCase().includes('jersey')) {
+    subtitle = "A person was detected. Please photograph a waste item like a bottle, can, or packaging.";
+  } else if (detected.toLowerCase().includes('dog') || detected.toLowerCase().includes('cat') ||
+             detected.toLowerCase().includes('animal')) {
+    subtitle = "An animal was detected. Please photograph a waste item instead.";
+  } else if (detected.toLowerCase().includes('car') || detected.toLowerCase().includes('vehicle')) {
+    subtitle = "A vehicle was detected. Please photograph a waste item like packaging or a bottle.";
+  }
+
+  document.getElementById('nw-subtitle').textContent = subtitle;
+  document.getElementById('nw-detected-txt').textContent = detected;
+
+  const card = document.getElementById('nonwaste-card');
+  card.style.display = 'block';
+  requestAnimationFrame(() => {
+    card.classList.add('show');
+    card.scrollIntoView({behavior:'smooth', block:'nearest'});
+  });
+}
+
+// ── RENDER RESULT ─────────────────────────────────────────────────────────────
+function renderResult(r) {
+  const rawBin   = r.primary_bin || 'Unknown';
+  const rawConf  = r.confidence || 0;
+  const confPct  = Math.round(rawConf * 100);
+  const topProbs = Object.values(r.probs || {}).sort((a,b) => b-a);
+  const diff12   = (topProbs[0]||0) - (topProbs[1]||0);
+  const isUncertain = rawConf < 0.68 || diff12 < 0.22 || ((topProbs[0]||0) < 0.62 && (topProbs[2]||0) > 0.08);
+
+  const displayBin    = isUncertain ? 'Mixed / Uncertain' : rawBin;
+  const displayColor  = BIN_COLOR[displayBin] || '#6b7280';
+  const displayBg     = BIN_BG[displayBin] || '#f9fafb';
+  const displayEmoji  = isUncertain ? '⚠️' : (r.bin_emoji || '♻️');
+  const displayAction = isUncertain ? 'Separate materials if possible' : (r.action || '');
+  const displayCo2    = isUncertain ? 0 : (r.co2_saved || 0);
+  const displayScrap  = isUncertain ? 0 : (r.scrap_value || 0);
+  const displayWeight = r.weight_kg || 0;
+
+  if (!isUncertain) {
+    const binId = `bin-${rawBin.toLowerCase().replace(/ \//g,'-').replace(/ /g,'-')}`;
+    const el = document.getElementById(binId);
+    if (el) el.classList.add(`active-${rawBin.toLowerCase()}`);
+  }
+
+  let alerts = '';
+  if (isUncertain) {
+    const topStr = Object.entries(r.probs||{}).sort(([,a],[,b])=>b-a).slice(0,3)
+      .map(([k,v]) => `${EMOJI[k]||'•'} ${k.replace('_',' ')} ${Math.round(v*100)}%`).join(' · ');
+    alerts += `<div class="alert alert-amber"><span class="alert-ico">⚠️</span><span class="alert-txt"><strong>Mixed materials likely</strong><br>${topStr}<br><small>Separate items and scan one at a time</small></span></div>`;
+  } else if (rawConf < 0.65) {
+    alerts += `<div class="alert alert-warn"><span class="alert-ico">⚠️</span><span class="alert-txt">Low confidence (${confPct}%) — try better lighting or a closer shot</span></div>`;
+  }
+  if (r.override_reason) {
+    alerts += `<div class="alert alert-amber"><span class="alert-ico">🔄</span><span class="alert-txt"><strong>Override → ${r.override_label}</strong><br>${r.override_reason.replace('🤖 CV AUTO: ','')}</span></div>`;
+  }
+  if (!isUncertain && rawConf >= 0.75) {
+    alerts += `<div class="alert alert-success"><span class="alert-ico">✅</span><span class="alert-txt">High confidence classification</span></div>`;
+  }
+
+  const r2 = 22, circ = 2*Math.PI*r2;
+  const dash = (rawConf*circ).toFixed(1);
+  const gap  = circ.toFixed(1);
+  const off  = (circ*0.25).toFixed(1);
+
+  const probBars = Object.entries(r.probs||{}).sort(([,a],[,b])=>b-a).map(([label,prob]) => `
+    <div class="prow">
+      <div class="pname">${EMOJI[label]||'•'} ${label.replace('_',' ')}</div>
+      <div class="ptrack"><div class="pfill" style="background:${PROB_COLOR[label]||'#ccc'}" data-w="${Math.round(prob*100)}%"></div></div>
+      <div class="ppct">${Math.round(prob*100)}%</div>
+    </div>`).join('');
+
+  document.getElementById('result-card').innerHTML = `
+    <div class="r-banner">
+      <div class="r-emoji">${displayEmoji}</div>
+      <div class="r-text">
+        <div class="r-primary" style="color:${displayColor}">${displayBin}</div>
+        <div class="r-tag" style="background:${displayBg};color:${displayColor}">
+          ${EMOJI[r.display]||'?'} ${(r.display||'').replace('_',' ')||'—'}
+        </div>
+        <div class="r-action">📍 ${displayAction}</div>
+      </div>
+      <svg class="conf-ring" width="56" height="56" viewBox="0 0 56 56">
+        <circle cx="28" cy="28" r="${r2}" fill="none" stroke="${displayColor}18" stroke-width="5"/>
+        <circle cx="28" cy="28" r="${r2}" fill="none" stroke="${displayColor}" stroke-width="5"
+          stroke-dasharray="${dash} ${gap}" stroke-dashoffset="${off}" stroke-linecap="round"/>
+        <text x="28" y="33" text-anchor="middle" fill="${displayColor}"
+          font-size="10.5" font-weight="700" font-family="DM Mono,monospace">${confPct}%</text>
+      </svg>
+    </div>
+    ${alerts}
+    <div class="probs">
+      <div class="probs-ttl">Prediction Breakdown</div>
+      ${probBars}
+    </div>
+    <div class="metrics">
+      <div class="mbox"><div class="mval">~${displayWeight}kg</div><div class="mlbl">Est. weight</div></div>
+      <div class="mbox"><div class="mval">${displayCo2}kg</div><div class="mlbl">CO₂ saved</div></div>
+      <div class="mbox"><div class="mval">₹${displayScrap}</div><div class="mlbl">Scrap value</div></div>
+    </div>
+    <div class="facility-row">📍 <span>Nearest: <strong>${r.facility||'Check locally'}</strong></span></div>
+  `;
+
+  const card = document.getElementById('result-card');
+  card.style.display = 'block';
+  requestAnimationFrame(() => {
+    card.classList.add('show');
+    card.querySelectorAll('.pfill').forEach(bar => { bar.style.width = bar.dataset.w; });
+    card.scrollIntoView({behavior:'smooth', block:'nearest'});
+  });
+}
+
+// ── XAI ───────────────────────────────────────────────────────────────────────
+function renderXAI(steps) {
+  const container = document.getElementById('xai');
+  if (!steps.length) { container.style.display = 'none'; return; }
+  document.getElementById('xai-body').innerHTML = steps.map(([ico,title,desc]) => `
+    <div class="xai-step">
+      <div class="xai-ico">${ico}</div>
+      <div class="xai-step-body">
+        <div class="xai-ttl">${title}</div>
+        <div class="xai-desc">${desc}</div>
+      </div>
+    </div>`).join('');
+  container.style.display = 'block';
+  document.getElementById('xai-body').classList.add('open');
+  document.getElementById('xai-chevron').classList.add('open');
+}
+
+function toggleXAI() {
+  document.getElementById('xai-body').classList.toggle('open');
+  document.getElementById('xai-chevron').classList.toggle('open');
+}
+
+// ── SESSION ───────────────────────────────────────────────────────────────────
+function updateSession(r) {
+  const bin   = r.primary_bin || 'Unknown';
+  const label = r.display || 'Unknown';
+  SESSION.n++;
+  SESSION.co2    += r.co2_saved || 0;
+  SESSION.weight += r.weight_kg || 0;
+  SESSION.value  += r.scrap_value || 0;
+  SESSION.confs.push(r.confidence || 0);
+  SESSION.cats[label] = (SESSION.cats[label] || 0) + 1;
+  const now = new Date();
+  SESSION.hist.unshift({
+    label, bin, conf:r.confidence||0, co2:r.co2_saved||0,
+    emoji: EMOJI[label]||'?', action:r.action||'', blocked:false,
+    time: now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+  });
+  document.getElementById('s-n').textContent = SESSION.n;
+  document.getElementById('s-co2').textContent = SESSION.co2.toFixed(1);
+  const avgConf = SESSION.confs.reduce((a,b) => a+b, 0) / SESSION.confs.length;
+  document.getElementById('s-acc').textContent = Math.round(avgConf*100) + '%';
+  addHistItem(SESSION.hist[0]);
+}
+
+function updateSessionBlocked(r) {
+  // Track blocked scans in history (don't count toward impact)
+  SESSION.blocked++;
+  const detected = r.display || 'non-waste';
+  const now = new Date();
+  SESSION.hist.unshift({
+    label: 'Non-Waste', bin: 'None', conf: r.confidence||0, co2:0,
+    emoji:'🚫', action:`Gemini blocked: ${detected}`, blocked:true,
+    time: now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+  });
+  addHistItem(SESSION.hist[0]);
+}
+
+function addHistItem(h) {
+  document.getElementById('hist-empty').style.display = 'none';
+  const el = document.createElement('div');
+  el.className = 'hist-item' + (h.blocked ? ' blocked' : '');
+  const c  = h.blocked ? '#4f67ff' : (BIN_COLOR[h.bin]||'#6b7280');
+  const bg = h.blocked ? '#eef0ff' : (BIN_BG[h.bin]||'#f9fafb');
+  el.innerHTML = `
+    <div class="hist-emoji">${h.emoji}</div>
+    <div class="hist-body">
+      <div class="hist-label">${h.label.replace('_',' ')}</div>
+      <div class="hist-sub">${h.action}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+      <span class="hist-bin" style="background:${bg};color:${c}">${h.blocked ? 'Blocked' : h.bin}</span>
+      <span class="hist-time">${h.time}</span>
+    </div>`;
+  document.getElementById('hist-list').prepend(el);
+}
+
+function renderImpact() {
+  document.getElementById('imp-co2').textContent = SESSION.co2.toFixed(2);
+  document.getElementById('imp-items').textContent = SESSION.n;
+  document.getElementById('imp-value').textContent = '₹' + SESSION.value.toFixed(0);
+  document.getElementById('imp-weight').textContent = SESSION.weight.toFixed(1) + 'kg';
+  const avgC = SESSION.confs.length ? SESSION.confs.reduce((a,b)=>a+b) / SESSION.confs.length : 0;
+  document.getElementById('imp-conf').textContent = SESSION.confs.length ? Math.round(avgC*100)+'%' : '—';
+
+  let icon = '🌱', equiv = 'Start scanning to see your environmental impact';
+  if (SESSION.co2 >= 50)      { icon='🌳🌳🌳'; equiv=`Equivalent to planting ${Math.round(SESSION.co2/21)} trees`; }
+  else if (SESSION.co2 >= 15) { icon='🌲';     equiv=`Like driving ${Math.round(SESSION.co2/0.21)} km less`; }
+  else if (SESSION.co2 >= 5)  { icon='🌿';     equiv=`Offset of ${Math.round(SESSION.co2/0.5)} hours of phone charging`; }
+  else if (SESSION.co2 > 0)   { icon='🌱';     equiv=`${(SESSION.co2*1000).toFixed(0)}g CO₂ — keep going!`; }
+  document.getElementById('imp-icon').textContent = icon;
+  document.getElementById('imp-equiv').textContent = equiv;
+
+  const cats = Object.entries(SESSION.cats).sort(([,a],[,b]) => b-a);
+  const max  = cats[0] ? cats[0][1] : 1;
+  document.getElementById('breakdown-bars').innerHTML = cats.length
+    ? cats.map(([k,v]) => `
+        <div class="brow">
+          <div class="bname">${EMOJI[k]||'•'} ${k.replace('_',' ')}</div>
+          <div class="btrack"><div class="bfill" style="width:${Math.round(v/max*100)}%"></div></div>
+          <div class="bcount">${v}</div>
+        </div>`).join('')
+    : '<div style="font-size:.78rem;color:var(--text3);text-align:center;padding:16px 0">No data yet</div>';
+
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.bfill').forEach(b => {
+      const w = b.style.width; b.style.width = '0'; setTimeout(() => b.style.width = w, 50);
+    });
+  });
+}
+
+// ── RESET ─────────────────────────────────────────────────────────────────────
+function resetSession() {
+  Object.assign(SESSION, {n:0,co2:0,weight:0,value:0,confs:[],hist:[],cats:{},blocked:0});
+  ['s-n','s-co2'].forEach(id => document.getElementById(id).textContent = '0');
+  document.getElementById('s-acc').textContent = '—';
+  document.getElementById('hist-list').innerHTML = '';
+  document.getElementById('hist-empty').style.display = 'block';
+  hideResults();
+  toast('↺ Session reset');
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function toggleHintClear() {
+  document.getElementById('hint-clear').classList.toggle('show', document.getElementById('hint').value.length > 0);
+}
+function clearHint() {
+  document.getElementById('hint').value = '';
+  document.getElementById('hint-clear').classList.remove('show');
+}
+
+function openModal() {
+  document.getElementById('api-url').value = CFG.url;
+  document.getElementById('modal-bg').classList.add('open');
+}
+function closeModal() { document.getElementById('modal-bg').classList.remove('open'); }
+
+async function saveAPI() {
+  const url = document.getElementById('api-url').value.trim().replace(/\/$/,'');
+  CFG.url = url;
+  localStorage.setItem('wasteai_url', url);
+  closeModal();
+  if (!url) { toast('URL cleared'); setDot(false); return; }
+  toast('🔌 Testing connection…');
+  try {
+    const res  = await fetch(url + '/info', {signal: AbortSignal.timeout(6000)});
+    const data = await res.json();
+    setDot(res.ok);
+    if (res.ok) {
+      // NEW: show gatekeeper badge if backend reports it
+      const gk = data.gatekeeper || '';
+      CFG.gatekeeper = gk;
+      if (gk) {
+        const short = gk.replace('gemini-','').replace('-preview-05-20','');
+        document.getElementById('gem-badge-txt').textContent = short;
+        document.getElementById('gem-badge').classList.add('show');
+      }
+      toast(`✅ Connected · ${data.classes?.length||'?'} classes · ${gk || 'gatekeeper active'}`);
+    } else {
+      toast(`⚠ Status ${res.status}`);
+    }
+  } catch {
+    setDot(false);
+    toast('⚠ Saved — backend may still be starting');
+  }
+}
+
+function setDot(online) {
+  document.getElementById('status-dot').classList.toggle('online', online);
+  document.getElementById('status-txt').textContent = online ? 'ONLINE' : 'OFFLINE';
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' && document.activeElement.tagName !== 'INPUT') {
+    e.preventDefault(); doClassify();
+  }
+  if (e.key === 'Escape') closeModal();
+});
+
+// Auto-connect on load
+if (CFG.url) {
+  fetch(CFG.url + '/info', {signal: AbortSignal.timeout(4000)})
+    .then(async r => {
+      setDot(r.ok);
+      if (r.ok) {
+        const data = await r.json();
+        const gk = data.gatekeeper || '';
+        if (gk) {
+          const short = gk.replace('gemini-','').replace('-preview-05-20','');
+          document.getElementById('gem-badge-txt').textContent = short;
+          document.getElementById('gem-badge').classList.add('show');
+        }
+        toast('✅ Backend connected');
+      }
+    })
+    .catch(() => setDot(false));
+} else {
+  setTimeout(() => toast('⚙ Tap API to connect backend'), 900);
+}
+</script>
+</body>
+</html>

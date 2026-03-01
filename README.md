@@ -188,3 +188,11 @@ Classes used in training: `Plastic`, `Metal`, `Glass`, `Paper`, `Cardboard`, `Te
 6. **Explainability** — Visual cue taxonomy per class mapped to confidence tier logic and bin rationale strings, assembled into an ordered XAI step list per prediction.
 
 ---
+
+## Note on Commit History
+
+This project was initially developed and maintained in **Kaggle Notebooks** during the early stages of experimentation and model development. As a result, a significant portion of the work (including data exploration, preprocessing, and model iterations) was completed outside this GitHub repository.
+
+The code was later consolidated and pushed to this repository for submission and collaboration purposes. Therefore, the commit history here may not fully reflect the total development effort or individual contributions made during the hackathon.
+
+All team members actively contributed throughout the development process, even if the commit distribution in this repository appears uneven.
